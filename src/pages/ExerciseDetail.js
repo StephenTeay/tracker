@@ -16,10 +16,13 @@ const ExerciseDetail = () => {
   const { id } = useParams();
 
   // Helper function to add delay between requests
-  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+  const delay = (ms) => new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
     const fetchExercisesData = async () => {
       try {
         setLoading(true);
@@ -29,10 +32,11 @@ const ExerciseDetail = () => {
         // 1. Fetch exercise detail first
         const exerciseDetailData = await fetchData(`${exerciseDbUrl}/exercises/exercise/${id}`, exerciseOptions);
         setExerciseDetail(exerciseDetailData);
+
         // Add delay to prevent rate limiting
         await delay(1000);
 
-        // 2. Fetch YouTube videos
+        // 2. Fetch YouTube videos (skip if rate limited)
         try {
           const exerciseVideosData = await fetchData(`${youtubeSearchUrl}/search?query=${exerciseDetailData.name} exercise`, youtubeOptions);
           setExerciseVideos(exerciseVideosData.contents || []);
@@ -52,9 +56,7 @@ const ExerciseDetail = () => {
         // 4. Fetch equipment exercises
         const equipmentExercisesData = await fetchData(`${exerciseDbUrl}/exercises/equipment/${exerciseDetailData.equipment}`, exerciseOptions);
         setEquipmentExercises(equipmentExercisesData);
-
-      } 
-      catch (err) {
+      } catch (err) {
         console.error('API Error:', err);
         setError('Failed to load exercise data. Please try again later.');
       } finally {
