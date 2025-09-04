@@ -20,7 +20,6 @@ const ExerciseDetail = () => {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    
     const fetchExercisesData = async () => {
       try {
         setLoading(true);
@@ -30,7 +29,6 @@ const ExerciseDetail = () => {
         // 1. Fetch exercise detail first
         const exerciseDetailData = await fetchData(`${exerciseDbUrl}/exercises/exercise/${id}`, exerciseOptions);
         setExerciseDetail(exerciseDetailData);
-        
         // Add delay to prevent rate limiting
         await delay(1000);
 
@@ -55,7 +53,8 @@ const ExerciseDetail = () => {
         const equipmentExercisesData = await fetchData(`${exerciseDbUrl}/exercises/equipment/${exerciseDetailData.equipment}`, exerciseOptions);
         setEquipmentExercises(equipmentExercisesData);
 
-      } catch (err) {
+      } 
+      catch (err) {
         console.error('API Error:', err);
         setError('Failed to load exercise data. Please try again later.');
       } finally {
