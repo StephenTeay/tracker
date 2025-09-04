@@ -14,9 +14,28 @@ export const youtubeOptions = {
   },
 };
 
-export const fetchData = async (url, options) => {
-  const res = await fetch(url, options);
-  const data = await res.json();
 
-  return data;
+export const fetchData = async (url, options) => {
+  try {
+    const response = await fetch(url, options);
+    
+    if (response.status === 429) {
+      // Rate limited - wait and retry once
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      const retryResponse = await fetch(url, options);
+      if (!retryResponse.ok) {
+        throw new Error(`HTTP error! status: ${retryResponse.status}`);
+      }
+      return await retryResponse.json();
+    }
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Fetch error:', error);
+    throw error;
+  }
 };
